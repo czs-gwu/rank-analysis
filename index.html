@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shiny App</title>
+    <script
+      src="./shinylive/load-shinylive-sw.js"
+      type="module"
+    ></script>
+
+    <script type="module">
+      import { runExportedApp } from "./shinylive/shinylive.js";
+      
+      // Wait a brief moment for Chrome to catch and initialize the Service Worker controller
+      function startApp() {
+        if (!navigator.serviceWorker.controller) {
+          // If the controller isn't found yet, wait 200ms and try again
+          setTimeout(startApp, 200);
+          return;
+        }
+        
+        runExportedApp({
+          id: "root",
+          appEngine: "r",
+          relPath: "./",
+        });
+      }
+
+      // Boot up the safety loop
+      startApp();
+    </script>
+
+    <link rel="stylesheet" href="./shinylive/style-resets.css" />
+    <link rel="stylesheet" href="./shinylive/shinylive.css" />
+    
+  </head>
+  <body>
+    
+    <div style="height: 100vh; width: 100vw" id="root"></div>
+    
+  </body>
+</html>
