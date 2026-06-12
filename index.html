@@ -8,29 +8,14 @@
       src="./shinylive/load-shinylive-sw.js"
       type="module"
     ></script>
-
     <script type="module">
       import { runExportedApp } from "./shinylive/shinylive.js";
-      
-      // Wait a brief moment for Chrome to catch and initialize the Service Worker controller
-      function startApp() {
-        if (!navigator.serviceWorker.controller) {
-          // If the controller isn't found yet, wait 200ms and try again
-          setTimeout(startApp, 200);
-          return;
-        }
-        
-        runExportedApp({
-          id: "root",
-          appEngine: "r",
-          relPath: "./",
-        });
-      }
-
-      // Boot up the safety loop
-      startApp();
+      runExportedApp({
+        id: "root",
+        appEngine: "r",
+        relPath: "",
+      });
     </script>
-
     <link rel="stylesheet" href="./shinylive/style-resets.css" />
     <link rel="stylesheet" href="./shinylive/shinylive.css" />
     
