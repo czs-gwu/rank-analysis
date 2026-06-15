@@ -8,14 +8,51 @@
       src="./shinylive/load-shinylive-sw.js"
       type="module"
     ></script>
-    <script type="module">
-      import { runExportedApp } from "./shinylive/shinylive.js";
-      runExportedApp({
-        id: "root",
-        appEngine: "r",
-        relPath: "",
-      });
-    </script>
+
+<script type="module">
+  import { runExportedApp } from "./shinylive/shinylive.js";
+  
+  async function startApp() {
+    // If the service worker hasn't claimed control yet, wait for it
+    if (!navigator.serviceWorker.controller) {
+      // Wait for a service worker to register and become active
+      const regs = await navigator.serviceWorker.getRegistrations();
+      if (regs.length > 0) {
+        const registration = regs[0];
+        // If there's a worker installing or waiting, wait for it to activate
+        const worker = registration.active || registration.waiting || registration.installing;
+        if (worker && worker.state !== 'activated') {
+          await new Promise((resolve) => {
+            worker.addEventListener('statechange', (e) => {
+              if (e.target.state === 'activated') resolve();
+            });
+          });
+        }
+      }
+      
+      // Force a tiny delay to let the browser register the controller context
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
+      // If still no controller, reload once to force alignment
+      if (!navigator.serviceWorker.controller) {
+        window.location.reload();
+        return;
+      }
+    }
+    
+    // Boot up the R app engine
+    runExportedApp({
+      id: "root",
+      appEngine: "r",
+      relPath: "",
+    });
+  }
+
+  // Run the enhanced boot loop
+  startApp();
+</script>
+
+
     <link rel="stylesheet" href="./shinylive/style-resets.css" />
     <link rel="stylesheet" href="./shinylive/shinylive.css" />
     
